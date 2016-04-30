@@ -8,7 +8,7 @@ Source:
 
 ###Chapter 1 - Holo World
 <i>In this chapter you will set up Unity for holographic development, make a hologram, and see the hologram you made.</i>
-
+<br/><br/>
 <strong>Step 1:</strong>
 Launch Unity and open Origami Project.
 <br/>
@@ -65,8 +65,81 @@ Change target from Debug to Release, change ARM to X86 and change Device to Holo
 <br/>
 <strong>Step 17:</strong>
 Start the emulator by clicking Debug > Start without debugging and the Origami Project is now running in the emulator
+<br/><br/>
+###Chapter 2 - Gaze
+<i>In this chapter you will visualize your gaze using a world-locked cursor.</i>
+<br/><br/>
+<strong>Step 1:</strong>
+Select the Hologram folder in the Project Panel
+<br/>
+<strong>Step 2:</strong>
+Drag the Cursor object into the Hierarchy panel
+<br/>
+<strong>Step 3:</strong>
+Double-click on the Cursor object and right-click in the Scripts Folder in the Project Panel to create a new C# Script named
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/WorldCursor.cs">
+WorldCursor
+</a>
+<br/>
+<strong>Step 4:</strong>
+Select the Cursor and drag and drop the 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/WorldCursor.cs">
+WorldCursor 
+</a>
+Script into the Inspector Panel
+<br/>
+<strong>Step 5:</strong>
+Double Click on the 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/WorldCursor.cs">
+WorldCursor
+</a>
+Script to edit the script in Visual Studio and write the following code
+```C#
+using UnityEngine;
 
+public class WorldCursor : MonoBehaviour
+{
+    private MeshRenderer meshRenderer;
 
+    // Use this for initialization
+    void Start()
+    {
+        // Grab the mesh renderer that's on the same object as this script.
+        meshRenderer = this.gameObject.GetComponentInChildren<MeshRenderer>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // Do a raycast into the world based on the user's
+        // head position and orientation.
+        var headPosition = Camera.main.transform.position;
+        var gazeDirection = Camera.main.transform.forward;
+
+        RaycastHit hitInfo;
+
+        if (Physics.Raycast(headPosition, gazeDirection, out hitInfo))
+        {
+            // If the raycast hit a hologram...
+            // Display the cursor mesh.
+            meshRenderer.enabled = true;
+
+            // Move thecursor to the point where the raycast hit.
+            this.transform.position = hitInfo.point;
+
+            // Rotate the cursor to hug the surface of the hologram.
+            this.transform.rotation = Quaternion.FromToRotation(Vector3.up, hitInfo.normal);
+        }
+        else
+        {
+            // If the raycast did not hit a hologram, hide the cursor mesh.
+            meshRenderer.enabled = false;
+        }
+    }
+}
+```
+<strong>Step 6:</strong>
+Rebuild app in Unity in the same App Folder and run in emulator in Visual Studio
 
 
 
