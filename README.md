@@ -140,7 +140,131 @@ public class WorldCursor : MonoBehaviour
 ```
 <strong>Step 6:</strong>
 Rebuild app in Unity in the same App Folder and run in emulator in Visual Studio
+<br/><br/>
+###Chapter 3 - Gestures
+<i>In this chapter you will control your holograms with the select gesture.</i>
+<br/><br/>
+<strong>Step 1:</strong>
+Select the Hologram folder in the Project Panel
+<br/>
+<strong>Step 2:</strong>
+Double-click on the Origami Collection object and right-click in the Scripts Folder in the Project Panel to create a new C# Script named 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/GazeGestureManager.cs">
+GazeGestureManager
+</a>
+<br/>
+<strong>Step 3:</strong>
+Select the Origami Collection object and drag and drop the 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/GazeGestureManager.cs">
+GazeGestureManager
+</a>
+Script into the Inspector Panel
+<br/>
+<strong>Step 4:</strong>
+Double-click on the 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/GazeGestureManager.cs">
+GazeGestureManager
+</a>
+Script to edit the script in Visual Studio and write the following code
+```C#
+using UnityEngine;
+using UnityEngine.VR.WSA.Input;
 
+public class GazeGestureManager : MonoBehaviour
+{
+    public static GazeGestureManager Instance { get; private set; }
 
+    // Represents the hologram that is currently being gazed at.
+    public GameObject FocusedObject { get; private set; }
 
+    GestureRecognizer recognizer;
 
+    // Use this for initialization
+    void Start()
+    {
+        Instance = this;
+
+        // Set up a GestureRecognizer to detect Select gestures.
+        recognizer = new GestureRecognizer();
+        recognizer.TappedEvent += (source, tapCount, ray) =>
+        {
+            // Send an OnSelect message to the focused object and its ancestors.
+            if (FocusedObject != null)
+            {
+                FocusedObject.SendMessageUpwards("OnSelect");
+            }
+        };
+        recognizer.StartCapturingGestures();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // Figure out which hologram is focused this frame.
+        GameObject oldFocusObject = FocusedObject;
+
+        // Do a raycast into the world based on the user's
+        // head position and orientation.
+        var headPosition = Camera.main.transform.position;
+        var gazeDirection = Camera.main.transform.forward;
+
+        RaycastHit hitInfo;
+        if (Physics.Raycast(headPosition, gazeDirection, out hitInfo))
+        {
+            // If the raycast hit a hologram, use that as the focused object.
+            FocusedObject = hitInfo.collider.gameObject;
+        }
+        else
+        {
+            // If the raycast did not hit a hologram, clear the focused object.
+            FocusedObject = null;
+        }
+
+        // If the focused object changed this frame,
+        // start detecting fresh gestures again.
+        if (FocusedObject != oldFocusObject)
+        {
+            recognizer.CancelGestures();
+            recognizer.StartCapturingGestures();
+        }
+    }
+}
+```
+<strong>Step 5:</strong>
+Double-click on the Origami Collection object and right-click in the Scripts Folder in the Project Panel to create a new C# Script named 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/GazeGestureManager.cs">
+SphereCommands
+</a>
+<br/>
+<strong>Step 6:</strong>
+Select the Sphere1 object and drag and drop  the 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/GazeGestureManager.cs">
+SphereCommands
+</a>
+Script into the Inspector Panel and do the same for Sphere2
+<br/>
+<strong>Step 7:</strong>
+Double-click on the 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/GazeGestureManager.cs">
+SphereCommands
+</a>
+Script to edit the script in Visual Studio and write the following code
+```C#
+using UnityEngine;
+
+public class SphereCommands : MonoBehaviour
+{
+    // Called by GazeGestureManager when the user performs a Select gesture
+    void OnSelect()
+    {
+        // If the sphere has no Rigidbody component, add one to enable physics.
+        if (!this.GetComponent<Rigidbody>())
+        {
+            var rigidbody = this.gameObject.AddComponent<Rigidbody>();
+            rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        }
+    }
+}
+```
+<strong>Step 8:</strong>
+Rebuild app in Unity in the same App Folder and run emulator in Visual Studio and use spacebar to simulate a tap gesture in the emulator
