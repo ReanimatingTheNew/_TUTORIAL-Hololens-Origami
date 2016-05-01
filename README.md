@@ -268,3 +268,116 @@ public class SphereCommands : MonoBehaviour
 ```
 <strong>Step 8:</strong>
 Rebuild app in Unity in the same App Folder and run emulator in Visual Studio and use spacebar to simulate a tap gesture in the emulator
+<br/><br/>
+###Chapter 4 - Voice
+<i>In this chapter you will control your holograms through voice commands.</i>
+<br/><br/>
+<strong>Step 1:</strong>
+Double-click on the Origami Collection object and right-click in the Scripts Folder in the Project Panel to create a new C# Script named 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/SpeechManager.cs">
+SpeechManager
+</a>
+<br/>
+<strong>Step 2:</strong>
+Select the Origami Collection object and drag and drop the 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/SpeechManager.cs">
+SpeechManager 
+</a>
+Script into the Inspector Panel  
+<br/>
+<strong>Step 3:</strong>
+Double-click on the 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/SpeechManager.cs">
+SpeechManager
+</a>
+Script to edit the script in Visual Studio and write the following code
+```C#
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.Windows.Speech;
+
+public class SpeechManager : MonoBehaviour
+{
+    KeywordRecognizer keywordRecognizer = null;
+    Dictionary<string, System.Action> keywords = new Dictionary<string, System.Action>();
+
+    // Use this for initialization
+    void Start()
+    {
+        keywords.Add("Reset world", () =>
+        {
+            // Call the OnReset method on every descendant object.
+            this.BroadcastMessage("OnReset");
+        });
+
+        keywords.Add("Drop Sphere", () =>
+        {
+            var focusObject = GazeGestureManager.Instance.FocusedObject;
+            if (focusObject != null)
+            {
+                // Call the OnDrop method on just the focused object.
+                focusObject.SendMessage("OnDrop");
+            }
+        });
+
+        // Tell the KeywordRecognizer about our keywords.
+        keywordRecognizer = new KeywordRecognizer(keywords.Keys.ToArray());
+
+        // Register a callback for the KeywordRecognizer and start recognizing!
+        keywordRecognizer.OnPhraseRecognized += KeywordRecognizer_OnPhraseRecognized;
+        keywordRecognizer.Start();
+    }
+
+    private void KeywordRecognizer_OnPhraseRecognized(PhraseRecognizedEventArgs args)
+    {
+        System.Action keywordAction;
+        if (keywords.TryGetValue(args.text, out keywordAction))
+        {
+            keywordAction.Invoke();
+        }
+    }
+}
+```
+<strong>Step 4:</strong>
+Update 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/SphereCommand.cs">
+SphereCommand.cs 
+</a>
+Script with the following code
+```C#
+Vector3 originalPosition;
+
+    // Use this for initialization
+    void Start()
+    {
+        // Grab the original local position of the sphere when the app starts.
+        originalPosition = this.transform.localPosition;
+    }
+// Called by SpeechManager when the user says the "Reset world" command
+    void OnReset()
+    {
+        // If the sphere has a Rigidbody component, remove it to disable physics.
+        var rigidbody = this.GetComponent<Rigidbody>();
+        if (rigidbody != null)
+        {
+            DestroyImmediate(rigidbody);
+        }
+
+        // Put the sphere back into its original local position.
+        this.transform.localPosition = originalPosition;
+    }
+
+    // Called by SpeechManager when the user says the "Drop sphere" command
+    void OnDrop()
+    {
+        // Just do the same logic as a Select gesture.
+        OnSelect();
+    }
+```
+<strong>Step 5:</strong>
+Rebuild app in Unity in the same App Folder and run emulator in Visual Studio
+
+
+
+
