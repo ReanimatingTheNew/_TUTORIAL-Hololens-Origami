@@ -232,20 +232,20 @@ public class GazeGestureManager : MonoBehaviour
 ```
 <strong>Step 5:</strong>
 Double-click on the Origami Collection object and right-click in the Scripts Folder in the Project Panel to create a new C# Script named 
-<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/GazeGestureManager.cs">
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/SphereCommands.cs">
 SphereCommands
 </a>
 <br/>
 <strong>Step 6:</strong>
 Select the Sphere1 object and drag and drop  the 
-<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/GazeGestureManager.cs">
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/SphereCommands.cs">
 SphereCommands
 </a>
 Script into the Inspector Panel and do the same for Sphere2
 <br/>
 <strong>Step 7:</strong>
 Double-click on the 
-<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/GazeGestureManager.cs">
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/SphereCommands.cs">
 SphereCommands
 </a>
 Script to edit the script in Visual Studio and write the following code
@@ -341,8 +341,8 @@ public class SpeechManager : MonoBehaviour
 ```
 <strong>Step 4:</strong>
 Update 
-<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/SphereCommand.cs">
-SphereCommand.cs 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/SphereCommands.cs">
+SphereCommands.cs 
 </a>
 Script with the following code
 ```C#
