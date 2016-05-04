@@ -377,6 +377,122 @@ Vector3 originalPosition;
 ```
 <strong>Step 5:</strong>
 Rebuild app in Unity in the same App Folder and run emulator in Visual Studio
+<br/><br/>
+###Chapter 5 - Spatial Sound
+<i>In this chapter you will add music and trigger sound effects on certain actions.</i>
+<br/><br/>
+<strong>Step 1:</strong>
+In Unity select form the top menu Edit > Project Settings > Audio
+<br/>
+<strong>Step 2:</strong>
+Find the Spatializer Plugin setting and select MS HRTF Spatializer
+<br/>
+<strong>Step 3:</strong>
+Drag the Ambience object from the Holograms folder onto the OrigamiCollection in the Hierarchy Panel
+<br/>
+<strong>Step 4:</strong>
+Change the following properties of the Audio Source for the Origami Collection
+<ul>
+  <li>Check the Spatialize Property</li>
+  <li>Check Play On Awake</li>
+  <li>Change Spatial Blend to 3D by dragging slider all the way to the right</li>
+  <li>Inside 3D Sound Settings enter 0.1 for the Doppler Level</li>
+</ul>
+<strong>Step 5:</strong> 
+Create a new Script called 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/SphereSounds.cs">
+SphereSounds
+</a><br/>
+<strong>Step 6:</strong>
+Drag the 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/SphereSounds.cs">
+SphereSounds
+</a>
+Script onto Sphere1 and Sphere2
+<br/>
+<strong>Step 7:</strong>
+Double-click on the 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/SphereSounds.cs">
+SphereSounds
+</a>
+Script to edit the script in Visual Studio and write the following code
+```C#
+using UnityEngine;
+
+public class SphereSounds : MonoBehaviour
+{
+    AudioSource audioSource = null;
+    AudioClip impactClip = null;
+    AudioClip rollingClip = null;
+
+    bool rolling = false;
+
+    void Start()
+    {
+        // Add an AudioSource component and set up some defaults
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.spatialize = true;
+        audioSource.spatialBlend = 1.0f;
+        audioSource.dopplerLevel = 0.0f;
+        audioSource.rolloffMode = AudioRolloffMode.Custom;
+
+        // Load the Sphere sounds from the Resources folder
+        impactClip = Resources.Load<AudioClip>("Impact");
+        rollingClip = Resources.Load<AudioClip>("Rolling");
+    }
+
+    // Occurs when this object starts colliding with another object
+    void OnCollisionEnter(Collision collision)
+    {
+        // Play an impact sound if the sphere impacts strongly enough.
+        if (collision.relativeVelocity.magnitude >= 0.1f)
+        {
+            audioSource.clip = impactClip;
+            audioSource.Play();
+        }
+    }
+
+    // Occurs each frame that this object continues to collide with another object
+    void OnCollisionStay(Collision collision)
+    {
+        Rigidbody rigid = this.gameObject.GetComponent<Rigidbody>();
+
+        // Play a rolling sound if the sphere is rolling fast enough.
+        if (!rolling && rigid.velocity.magnitude >= 0.01f)
+        {
+            rolling = true;
+            audioSource.clip = rollingClip;
+            audioSource.Play();
+        }
+        // Stop the rolling sound if rolling slows down.
+        else if (rolling && rigid.velocity.magnitude < 0.01f)
+        {
+            rolling = false;
+            audioSource.Stop();
+        }
+    }
+
+    // Occurs when this object stops colliding with another object
+    void OnCollisionExit(Collision collision)
+    {
+        // Stop the rolling sound if the object falls off and stops colliding.
+        if (rolling)
+        {
+            rolling = false;
+            audioSource.Stop();
+        }
+    }
+}
+```
+<strong>Step 8:</strong> 
+Rebuild app in Unity in the same App Folder and run emulator in Visual Studio
+
+
+
+
+
+
 
 
 
