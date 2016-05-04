@@ -54,6 +54,7 @@
      <Compile Include="Assets\Scripts\GazeGestureManager.cs" />
      <Compile Include="Assets\Scripts\SpeechManager.cs" />
      <Compile Include="Assets\Scripts\SphereCommands.cs" />
+     <Compile Include="Assets\Scripts\SphereSounds.cs" />
      <Compile Include="Assets\Scripts\WorldCursor.cs" />
      <None Include="Assets\Resources\Wireframe.shader" />
      <None Include="Assets\Resources\DebugNormals.shader" />
