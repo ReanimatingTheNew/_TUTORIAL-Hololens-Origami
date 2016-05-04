@@ -487,11 +487,91 @@ public class SphereSounds : MonoBehaviour
 ```
 <strong>Step 8:</strong> 
 Rebuild app in Unity in the same App Folder and run emulator in Visual Studio
+<br/><br/>
+###Chapter 6 - Spatial Mapping
+<i>In this chapter you will place the game board on a real object in the real world.</i>
+<br/><br/>
+<strong>Step 1:</strong> 
+Drag the Spatial Mapping asset from the Holograms folder to the root of the Hierarchy
+<br/>
+<strong>Step 2:</strong> 
+In the Inspector Panel check Draw Visual Mesh and Locate Draw Material and click the circle and select Wireframe
+<br/>
+<strong>Step 3:</strong>
+Create a new script called 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/TapToPlaceParent.cs">
+TapToPlaceParent
+</a><br/>
+<strong>Step 4:</strong>
+Drag the 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/TapToPlaceParent.cs">
+TapToPlaceParent
+</a>
+Script to the Stage
+<br/>
+<strong>Step 5:</strong>
+Double-click on the 
+<a href="https://github.com/kevincarrier/_TUTORIAL-Hololens-Origami/blob/master/Origami/Assets/Scripts/TapToPlaceParent.cs">
+TapToPlaceParent
+</a>
+Script to edit the script in Visual Studio and write the following code
+```C#
+using UnityEngine;
 
+public class TapToPlaceParent : MonoBehaviour
+{
+    bool placing = false;
 
+    // Called by GazeGestureManager when the user performs a Select gesture
+    void OnSelect()
+    {
+        // On each Select gesture, toggle whether the user is in placing mode.
+        placing = !placing;
 
+        // If the user is in placing mode, display the spatial mapping mesh.
+        if (placing)
+        {
+            SpatialMapping.Instance.DrawVisualMeshes = true;
+        }
+        // If the user is not in placing mode, hide the spatial mapping mesh.
+        else
+        {
+            SpatialMapping.Instance.DrawVisualMeshes = false;
+        }
+    }
 
+    // Update is called once per frame
+    void Update()
+    {
+        // If the user is in placing mode,
+        // update the placement to match the user's gaze.
 
+        if (placing)
+        {
+            // Do a raycast into the world that will only hit the Spatial Mapping mesh.
+            var headPosition = Camera.main.transform.position;
+            var gazeDirection = Camera.main.transform.forward;
+
+            RaycastHit hitInfo;
+            if (Physics.Raycast(headPosition, gazeDirection, out hitInfo,
+                30.0f, SpatialMapping.PhysicsRaycastMask))
+            {
+                // Move this object's parent object to
+                // where the raycast hit the Spatial Mapping mesh.
+                this.transform.parent.position = hitInfo.point;
+
+                // Rotate this object's parent object to face the user.
+                Quaternion toQuat = Camera.main.transform.localRotation;
+                toQuat.x = 0;
+                toQuat.z = 0;
+                this.transform.parent.rotation = toQuat;
+            }
+        }
+    }
+}
+```
+<strong>Step 6:</strong>
+Rebuild app in Unity in the same App Folder and run emulator in Visual Studio
 
 
 
