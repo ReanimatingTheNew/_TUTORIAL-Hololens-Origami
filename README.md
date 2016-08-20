@@ -1,7 +1,6 @@
 # Hololens Tutorial - Origami
-Description: Origami Hololens Project
-
-Source:
+Origami Hololens Project
+<br/>
 <a href="https://developer.microsoft.com/en-us/windows/holographic/holograms_101e">
   Origami Hololens Tutorial
 </a>
